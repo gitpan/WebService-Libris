@@ -28,14 +28,14 @@ WebService::Libris - Access book meta data from libris.kb.se
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 Note that this low version number actually reflects the immaturity of this
 module - no unit tests yet :(
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 =head1 SYNOPSIS
@@ -303,11 +303,13 @@ sub collection_from_dom {
     my $key;
     my @ids;
     my $idx = 1;
+    my %seen;
     $self->dom->find($search_for)->each(sub {
         my $d = shift;
         my $resource_url = $d->attrs->{'rdf:resource'};
         return unless $resource_url;
         my ($k, $id) = $self->fragment_from_resource_url($resource_url);
+        next if $seen{$id}++;
         if ($idx == 1) {
             $key = $k;
         } elsif ($k ne $k) {
