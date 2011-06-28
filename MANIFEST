@@ -2,7 +2,6 @@ Changes
 lib/WebService/Libris.pm
 lib/WebService/Libris/Author.pm
 lib/WebService/Libris/Book.pm
-lib/WebService/Libris/Collection.pm
 lib/WebService/Libris/Library.pm
 lib/WebService/Libris/Utils.pm
 Makefile.PL
@@ -11,4 +10,5 @@ README
 t/00-load.t
 t/manifest.t
 t/pod.t
+t/basic.t
 META.yml                                 Module meta-data (added by MakeMaker)

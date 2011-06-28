@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               WebService-Libris
-version:            0.02
+version:            0.03
 abstract:           Access book meta data from libris.kb.se
 author:
     - Moritz Lenz <moritz@faui2k3.org>

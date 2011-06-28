@@ -2,7 +2,6 @@ package WebService::Libris;
 use Mojo::Base -base;
 use Mojo::UserAgent;
 use Mojo::URL;
-use WebService::Libris::Collection;
 
 use 5.010;
 use strict;
@@ -19,6 +18,7 @@ my %default_typemap = (
 has 'id';
 has 'type';
 has '_dom';
+has 'cache';
 
 has 'type_map';
 
@@ -28,14 +28,13 @@ WebService::Libris - Access book meta data from libris.kb.se
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
-Note that this low version number actually reflects the immaturity of this
-module - no unit tests yet :(
+Note that the API is still subject to change.
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 
 =head1 SYNOPSIS
@@ -48,6 +47,8 @@ our $VERSION = '0.02';
         type => 'book',
         # Libris ID
         id   => '9604288',
+        # optional but recommended:
+        cache_dir = '/tmp/webservice-libris/',
     );
     print $book->title;
 
@@ -112,11 +113,11 @@ related entities (such as authors and libraries).
 
 =head2 search
 
-    my $collection = WebService::Libris->search(
+    my @books = WebService::Libris->search(
         term    => 'Your Search Term Here',
         page    => 1,
     );
-    while (my $book = $collection->next) {
+    for my $book (@books) {
         say $book->title;
     }
 
@@ -232,6 +233,12 @@ sub new {
             $c = $default_typemap{lc $opts{type}};
         }
     }
+    if (my $cache_dir = delete $opts{cache_dir}) {
+        require WebService::Libris::FileCache;
+        $opts{cache} = WebService::Libris::FileCache->new(
+            directory => $cache_dir,
+        );
+    }
     if ($c) {
         $class = __PACKAGE__ . "::" . $c;
         eval "use $class; 1" or die $@;
@@ -251,9 +258,26 @@ sub rdf_url {
 sub dom {
     my $self = shift;
 
-    # TODO: add caching options
-    $self->_dom(Mojo::UserAgent->new()->get($self->rdf_url)->res->dom) unless $self->_dom;
+    unless ($self->_dom) {
+        if ($self->cache) {
+            my $key  = join '/', $self->fragments;
+            if (my $r = $self->cache->get($key)) {
+                $self->_dom($r);
+            } else {
+               my $dom = $self->_request_dom;
+               $self->cache->set($key, $dom);
+               $self->_dom($dom);
+            }
+        } else {
+            $self->_dom($self->_request_dom);
+        }
+    }
     $self->_dom;
+}
+
+sub _request_dom {
+    my $self = shift;
+    Mojo::UserAgent->new()->get($self->rdf_url)->res->dom;
 }
 
 sub direct_search {
@@ -281,6 +305,7 @@ sub search {
     WebService::Libris::Collection->new(
         type    => 'bib',
         ids     => \@ids,
+        cache   => $self->cache,
     );
 }
 
@@ -291,37 +316,32 @@ sub search_for_isbn {
     my $url = $res->res->headers->location;
     return unless $url;
     my ($type, $libris_id) = (split '/', $url)[-2, -1];
-    $self->new(type => $type, id => $libris_id);
+    $self->new(type => $type, id => $libris_id, cache => $self->cache);
 }
 
 sub fragments {
     die "Must be overridden in subclasses";
 }
 
-sub collection_from_dom {
+sub list_from_dom {
     my ($self, $search_for) = @_;
     my $key;
-    my @ids;
-    my $idx = 1;
+    my @result;
     my %seen;
     $self->dom->find($search_for)->each(sub {
         my $d = shift;
-        my $resource_url = $d->attrs->{'rdf:resource'};
+        my $resource_url =  $d->attrs->{'rdf:resource'}
+                         // $d->attrs->{'rdf:about'};
         return unless $resource_url;
         my ($k, $id) = $self->fragment_from_resource_url($resource_url);
-        next if $seen{$id}++;
-        if ($idx == 1) {
-            $key = $k;
-        } elsif ($k ne $k) {
-            die "Resource links differ in type ($key vs. $k), can't handle that yet";
-        }
-        push @ids, $id;
-        $idx++;
+        return if $seen{"$k/$id"}++;
+        push @result, __PACKAGE__->new(
+            type    => $k,
+            id      => $id,
+            cache   => $self->cache,
+        );
     });
-    WebService::Libris::Collection->new(
-        type    => $key,
-        ids     => \@ids,
-    );
+    @result;
 }
 
 sub fragment_from_resource_url {
