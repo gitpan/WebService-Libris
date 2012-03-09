@@ -1,0 +1,62 @@
+{
+   "abstract" : "Programmatic access to book meta data from libris.kb.se",
+   "author" : [
+      "Moritz Lenz"
+   ],
+   "dynamic_config" : 1,
+   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.113640",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "WebService-Libris",
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.38"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Mojolicious" : "0.040",
+            "perl" : "5.010"
+         }
+      }
+   },
+   "provides" : {
+      "WebService::Libris" : {
+         "file" : "lib/WebService/Libris.pm",
+         "version" : "0.07"
+      },
+      "WebService::Libris::Author" : {
+         "file" : "lib/WebService/Libris/Author.pm",
+         "version" : 0
+      },
+      "WebService::Libris::Book" : {
+         "file" : "lib/WebService/Libris/Book.pm",
+         "version" : 0
+      },
+      "WebService::Libris::FileCache" : {
+         "file" : "lib/WebService/Libris/FileCache.pm",
+         "version" : 0
+      },
+      "WebService::Libris::Library" : {
+         "file" : "lib/WebService/Libris/Library.pm",
+         "version" : 0
+      },
+      "WebService::Libris::Utils" : {
+         "file" : "lib/WebService/Libris/Utils.pm",
+         "version" : 0
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ]
+   },
+   "version" : "0.07"
+}

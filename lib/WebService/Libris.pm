@@ -28,13 +28,13 @@ WebService::Libris - Access book meta data from libris.kb.se
 
 =head1 VERSION
 
-Version 0.04
+Version 0.07
 
 Note that the API is still subject to change.
 
 =cut
 
-our $VERSION = '0.04';
+our $VERSION = '0.07';
 
 
 =head1 SYNOPSIS
@@ -128,7 +128,7 @@ See the C<direct_search> method above for a short discussion.
 
 =head2 search_for_isbn
 
-    my $book = WebService::ISBN->search_for_isbn('9170370192');
+    my $book = WebService::Libris->search_for_isbn('9170370192');
 
 Looks up a book by ISBN
 
