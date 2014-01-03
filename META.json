@@ -4,7 +4,7 @@
       "Moritz Lenz"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.113640",
+   "generated_by" : "Module::Build version 0.4203",
    "license" : [
       "perl_5"
    ],
@@ -16,12 +16,12 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build" : "0.38"
+            "Module::Build" : "0.42"
          }
       },
       "runtime" : {
          "requires" : {
-            "Mojolicious" : "0.040",
+            "Mojolicious" : "4.063",
             "perl" : "5.010"
          }
       }
@@ -29,27 +29,22 @@
    "provides" : {
       "WebService::Libris" : {
          "file" : "lib/WebService/Libris.pm",
-         "version" : "0.07"
+         "version" : "0.08"
       },
       "WebService::Libris::Author" : {
-         "file" : "lib/WebService/Libris/Author.pm",
-         "version" : 0
+         "file" : "lib/WebService/Libris/Author.pm"
       },
       "WebService::Libris::Book" : {
-         "file" : "lib/WebService/Libris/Book.pm",
-         "version" : 0
+         "file" : "lib/WebService/Libris/Book.pm"
       },
       "WebService::Libris::FileCache" : {
-         "file" : "lib/WebService/Libris/FileCache.pm",
-         "version" : 0
+         "file" : "lib/WebService/Libris/FileCache.pm"
       },
       "WebService::Libris::Library" : {
-         "file" : "lib/WebService/Libris/Library.pm",
-         "version" : 0
+         "file" : "lib/WebService/Libris/Library.pm"
       },
       "WebService::Libris::Utils" : {
-         "file" : "lib/WebService/Libris/Utils.pm",
-         "version" : 0
+         "file" : "lib/WebService/Libris/Utils.pm"
       }
    },
    "release_status" : "stable",
@@ -58,5 +53,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "0.07"
+   "version" : "0.08"
 }
